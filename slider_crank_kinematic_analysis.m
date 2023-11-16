@@ -14,7 +14,8 @@ clear;
 % - [X] Get coordinates
 % - [X] Simple constraints
 % - [X] Revolute joints
-% - [ ] Driving constraints
+% - [X] Driving constraints
+% - [X] Constrains equation
 % - [ ] Test call to fsolve
 % - [ ] Use of Newton Raphson 
 
@@ -26,9 +27,9 @@ sys = make_system();
 % To have coordinates - create a structure with bodies
 % ground = struct("name", "ground", "idx", 1:3, "q0", [0;0;0])
 sys = add_body(sys, "ground");
-sys = add_body(sys, "crank", [-100; 20; -deg2rad(30)]);
+sys = add_body(sys, "crank", [-100; 20; -deg2rad(31)]);
 sys = add_body(sys, "link", [-400; 20; deg2rad(10)]);
-sys = add_body(sys, "slider", [-500; 0; 0]);
+sys = add_body(sys, "slider", [-500; 0.1; 0.1]);
 
 %% Get coordinates for the whole system
 % The vector will store coordinates for each body in order
@@ -48,9 +49,19 @@ sys = add_revolute_joint(sys, "ground", "crank", [0; 0], [100; 0]);
 sys = add_revolute_joint(sys, "crank", "link", [-100; 0], [300; 0]);
 sys = add_revolute_joint(sys, "link", "slider", [-200; 0], [0; 0]);
 
+%% Add driving constrain
+fi_crank_0 = -deg2rad(30);
+omega = -1.2;
+sys = add_driving_constrain(sys, "crank", "fi", ...
+    @(t)fi_crank_0 + omega * t);
+
 fprintf("We have a system with %d bodies, %d coordinates, and %d constrains.\n", ...
     number_of_bodies(sys), number_of_coordinates(sys), ...
     number_of_constrains(sys));
+
+%% Constrain equations
+C = constrains(sys, q0, 0);
+
 
 
 

@@ -39,9 +39,9 @@ fprintf("We have a system with %d bodies and %d coordinates.\n", ...
 q0 = assemble_coordinates(sys);
 
 %% Simple constrains for our system
-sys = add_simple_constrain(sys, "ground", "x");
-sys = add_simple_constrain(sys, "ground", "y");
-sys = add_simple_constrain(sys, "ground", "fi");
+sys = add_simple_constrain(sys, "ground", "x", 0);
+sys = add_simple_constrain(sys, "ground", "y", 0);
+sys = add_simple_constrain(sys, "ground", "fi", 0);
 
 
 

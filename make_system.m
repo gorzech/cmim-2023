@@ -3,4 +3,5 @@ function sys = make_system()
 
 sys = struct("bodies", []);
 sys.constraints.simple = [];
+sys.constraints.revolute = [];
 end

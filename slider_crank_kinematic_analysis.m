@@ -16,7 +16,7 @@ clear;
 % - [X] Revolute joints
 % - [X] Driving constraints
 % - [X] Constrains equation
-% - [ ] Test call to fsolve
+% - [X] Test call to fsolve
 % - [ ] Use of Newton Raphson 
 
 %% Firstly, create a system to hold all the information about the multibody
@@ -62,6 +62,8 @@ fprintf("We have a system with %d bodies, %d coordinates, and %d constrains.\n",
 %% Constrain equations
 C = constrains(sys, q0, 0);
 
+%% Test call to fsolve
+q = fsolve(@(q) constrains(sys, q, 0.0), q0)
 
-
-
+%% Check if constraints are met
+norm(constrains(sys, q, 0.0))

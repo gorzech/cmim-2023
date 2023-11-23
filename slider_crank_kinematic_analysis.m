@@ -18,7 +18,7 @@ clear;
 % - [X] Constrains equation
 % - [X] Test call to fsolve
 % - [X] Jacobian of constraint equations
-% - [ ] Use of Newton Raphson 
+% - [X] Use of Newton Raphson 
 % - [ ] Position analysis in time
 % - [ ] Velocity analysis in time
 
@@ -66,10 +66,31 @@ fprintf("We have a system with %d bodies, %d coordinates, and %d constrains.\n",
 C = constrains(sys, q0, 0);
 
 %% Test call to fsolve
-q = fsolve(@(q) constrains(sys, q, 0.0), q0)
+tic
+q_fsolve = fsolve(@(q) constrains(sys, q, 0.0), q0);
+toc
 
-%% Check if constraints are met
-norm(constrains(sys, q, 0.0))
+%% Check if constraints are met for fsolve
+norm(constrains(sys, q_fsolve, 0.0))
 
 %% Test call our Jacobian
-Cq = jacobian_of_constrains(sys, q);
+Cq = jacobian_of_constrains(sys, q0);
+
+% %% Only for verification to help check if jacobian in correct
+% Cq_approximation = approximate_jacobian(@(q) constrains(sys, q, 0.0), q0);
+
+%% Use of NR to get q
+t = 0;
+tic
+[q, iteration_counter] = NR_method(@(q) constrains(sys, q, t), ...
+    @(q) jacobian_of_constrains(sys, q), q0, 1e-12);
+toc
+if iteration_counter > 0
+    disp("Kinematic solution on position level for t=0 works")
+else
+    disp("Kinematic solution on position level for t=0 DOES NOT work")
+end
+
+%% Check if constraints are met for NR solution
+norm(constrains(sys, q, 0.0))
+

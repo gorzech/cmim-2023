@@ -17,7 +17,10 @@ clear;
 % - [X] Driving constraints
 % - [X] Constrains equation
 % - [X] Test call to fsolve
+% - [X] Jacobian of constraint equations
 % - [ ] Use of Newton Raphson 
+% - [ ] Position analysis in time
+% - [ ] Velocity analysis in time
 
 %% Firstly, create a system to hold all the information about the multibody
 % system
@@ -67,3 +70,6 @@ q = fsolve(@(q) constrains(sys, q, 0.0), q0)
 
 %% Check if constraints are met
 norm(constrains(sys, q, 0.0))
+
+%% Test call our Jacobian
+Cq = jacobian_of_constrains(sys, q);

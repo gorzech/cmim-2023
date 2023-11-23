@@ -19,8 +19,8 @@ clear;
 % - [X] Test call to fsolve
 % - [X] Jacobian of constraint equations
 % - [X] Use of Newton Raphson 
-% - [ ] Position analysis in time
-% - [ ] Velocity analysis in time
+% - [X] Position analysis in time
+% - [X] Velocity analysis in time
 
 %% Firstly, create a system to hold all the information about the multibody
 % system
@@ -56,7 +56,7 @@ sys = add_revolute_joint(sys, "link", "slider", [-200; 0], [0; 0]);
 fi_crank_0 = -deg2rad(30);
 omega = -1.2;
 sys = add_driving_constrain(sys, "crank", "fi", ...
-    @(t)fi_crank_0 + omega * t);
+    @(t)fi_crank_0 + omega * t, @(t) omega, @(t) 0);
 
 fprintf("We have a system with %d bodies, %d coordinates, and %d constrains.\n", ...
     number_of_bodies(sys), number_of_coordinates(sys), ...
@@ -94,3 +94,30 @@ end
 %% Check if constraints are met for NR solution
 norm(constrains(sys, q, 0.0))
 
+%% Kinematic analysis solution
+T = 0:0.01:1;
+[Q, Qp] = kinematic_analysis(sys, T);
+
+%% make some plots to check the solution
+plot(T, Q(6, :), "LineWidth", 3.0)
+
+%% Plot the position of CMs
+plot(0, 0, 'o', Q(4, :), Q(5, :), Q(7, :), Q(8, :), Q(10, :), Q(11, :), "LineWidth", 3.0)
+xlabel("X [mm]")
+ylabel("Y [mm]")
+legend("Center of the world", ...
+    "CM position of the crank", ...
+    "CM position of the link", ...
+    "CM position of the slider")
+axis equal
+
+%% Plot the velocities of CMs
+figure
+plot(0, 0, 'o', Qp(4, :), Qp(5, :), Qp(7, :), Qp(8, :), Qp(10, :), Qp(11, :), "LineWidth", 3.0)
+xlabel("X [mm/s]")
+ylabel("Y [mm/2]")
+legend("Velocity of the center of the world", ...
+    "CM velocity of the crank", ...
+    "CM velocity of the link", ...
+    "CM velocity of the slider")
+axis equal

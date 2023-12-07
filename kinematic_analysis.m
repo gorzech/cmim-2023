@@ -12,11 +12,7 @@ Qp = zeros(length(q0), n_time);
 q0_ii = q0;
 for ii = 1:n_time
     t_ii = time(ii);
-    [q_ii, iteration_counter] = NR_method(@(q) constrains(sys, q, t_ii), ...
-        @(q) jacobian_of_constrains(sys, q), q0_ii, 1e-12);
-    if iteration_counter < 0
-        error("Kinematic solution on position level for t=%g DOES NOT work", t_ii);
-    end
+    q_ii = kinematic_analysis_position(sys, q0_ii, t_ii);
     % position analysis is done - perform velocity analysis
     Cq = jacobian_of_constrains(sys, q_ii);
     Ct = constrains_dt(sys, t_ii);
